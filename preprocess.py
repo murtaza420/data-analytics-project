@@ -52,7 +52,7 @@ def get_processed_data(population, df_covid, no_of_days, day_interval, start_dat
         row_idx += 1
         if (row_idx % 100 == 0):
             print(row_idx)
-        if(row_idx > data_len):
+        if(row_idx > data_len and data_len > 0):
             break
     return df_data
 
@@ -62,6 +62,7 @@ if __name__ == "__main__":
     df_covid = df_covid.sort_values(['state', 'county', 'date'], ascending=[True, True, True])
     day_interval = 7
     no_of_days = 4
+    data_len = 10000
     start_date = get_date('2020-02-20')
     
     if (len(sys.argv) > 1):
