@@ -1,3 +1,10 @@
 env/
 data/co-est2019-alldata.csv
 data/us-counties.txt
+temp/
+INFO659_FinalProject/
+INFO659_FinalProject.zip
+src/*.html
+src/*.RData
+src/*.Rhistory
+src/*.csv

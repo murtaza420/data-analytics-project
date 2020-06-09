@@ -1,0 +1,79 @@
+---
+title: "INFO659 Final Project"
+output: html_notebook
+---
+
+```{r}
+#install.packages("rpart.plot")
+#install.packages("ggplot2")
+#install.packages("e1071")
+#install.packages("lattice")
+#install.packages("caret")
+```
+
+##### Load data: 
+1)	Load “processed_data-1.csv” into data frame variable in R using read.csv(). 
+
+```{r}
+covid = read.csv("processed_data-1.csv")
+```
+
+
+```{r}
+covid$Target = factor(covid$Target,levels=c(0,1), labels=c("Safe","Unsafe"))
+```
+
+
+```{r}
+smp_size = floor(0.7*nrow(covid))
+set.seed(123)
+train_ind = sample(seq_len(nrow(covid)), size = smp_size)
+train=covid[train_ind,]
+test=covid[-train_ind,]
+```
+
+```{r}
+#View(train)
+```
+
+```{r}
+library(e1071)
+```
+
+```{r}
+nbTrain = naiveBayes(Target ~ Cases_7DAYS + Cases_14DAYS + Cases_21DAYS + Cases_28DAYS + Deaths_7DAYS + Deaths_14DAYS + Deaths_21DAYS + Deaths_28DAYS, train)
+```
+
+```{r}
+nbTrain
+```
+
+```{r}
+predict(nbTrain,train[1,])
+```
+
+```{r}
+library(caret)
+library(lattice)
+```
+
+
+```{r}
+predict(nbTrain,test[1,])
+```
+
+
+```{r}
+nb_test_predict= predict(nbTrain, test[,names(test)!="Target"])
+cfm=confusionMatrix(nb_test_predict,test$Target)
+cfm
+```
+
+```{r}
+logitMod <- glm(Target ~ Cases_7DAYS + Cases_14DAYS + Cases_21DAYS + Cases_28DAYS + Deaths_7DAYS + Deaths_14DAYS + Deaths_21DAYS + Deaths_28DAYS, data=train, family=binomial(link="logit"))
+
+predicted <- plogis(predict(logitMod, test))
+predicted_class <- ifelse(predicted <= 0.5, "Safe", "Unsafe")
+cfm1=confusionMatrix(factor(predicted_class),factor(test$Target))
+cfm1
+```
